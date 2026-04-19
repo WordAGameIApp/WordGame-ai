@@ -22,8 +22,7 @@ SRCS = main.c \
        game_menu.c \
        model_list.c \
        game_state.c \
-       game_ai.c \
-       $(CJSON_SRC)
+       game_ai.c
 
 OBJS = $(SRCS:.c=.o)
 

@@ -54,16 +54,10 @@ if not defined CJSON_PATH (
         set "CJSON_PATH=C:\cjson"
         echo [FOUND] cjson at: !CJSON_PATH!
     ) else (
-        REM 在当前目录搜索 cJSON.c
-        if exist "cJSON.c" (
-            set "CJSON_PATH=."
-            echo [FOUND] cjson in current directory
-        ) else (
-            echo [ERROR] cjson not found! Please install cjson or set CJSON_PATH manually.
-            echo.
-            echo Example: set CJSON_PATH=C:\path\to\cjson
-            exit /b 1
-        )
+        echo [ERROR] cjson not found! Please install cjson or set CJSON_PATH manually.
+        echo.
+        echo Example: set CJSON_PATH=C:\path\to\cjson
+        exit /b 1
     )
 ) else (
     echo [INFO] Using CJSON_PATH: %CJSON_PATH%
@@ -78,13 +72,12 @@ REM 设置编译器标志
 set "CURL_CFLAGS=-I%CURL_PATH%\include"
 set "CURL_LDFLAGS=-L%CURL_PATH%\lib -lcurl"
 set "CJSON_CFLAGS=-I%CJSON_PATH%"
-set "CJSON_LDFLAGS="
-set "CJSON_SRC=%CJSON_PATH%\cJSON.c"
+set "CJSON_LDFLAGS=-L%CJSON_PATH% -lcjson"
 
 echo CURL_CFLAGS=%CURL_CFLAGS%
 echo CURL_LDFLAGS=%CURL_LDFLAGS%
 echo CJSON_CFLAGS=%CJSON_CFLAGS%
-echo CJSON_SRC=%CJSON_SRC%
+echo CJSON_LDFLAGS=%CJSON_LDFLAGS%
 
 echo.
 echo ========================================
