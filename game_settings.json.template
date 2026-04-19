@@ -3,5 +3,6 @@
 	"top_p":	1,
 	"world_gen_model":	"deepseek-chat",
 	"main_plot_model":	"deepseek-chat",
-	"review_model":	"deepseek-chat"
+	"review_model":	"deepseek-chat",
+	"words_per_turn":	500
 }
