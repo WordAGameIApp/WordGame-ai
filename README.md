@@ -13,8 +13,14 @@
 
 本项目使用了以下第三方库：
 
-- **libcurl** - 用于 HTTP 请求 ([MIT 许可证](https://curl.se/docs/copyright.html))
-- **cJSON** - 用于 JSON 解析 ([MIT 许可证](https://github.com/DaveGamble/cJSON/blob/master/LICENSE))
+| 库 | 用途 | 许可证 |
+|---|---|---|
+| **libcurl** | HTTP 请求 | MIT/X |
+| **cJSON** | JSON 解析 | MIT |
+
+### 许可证兼容性说明
+
+本项目采用 **GPL-3.0** 许可证。使用的第三方库（libcurl 和 cJSON）均采用 MIT 许可证，与 GPL-3.0 兼容。MIT 许可证允许将代码整合到 GPL 项目中，同时保留版权声明。
 
 ## 编译
 
@@ -56,14 +62,26 @@ cp game_settings.json.template game_settings.json
 ## 第三方许可证
 
 ### libcurl
-Copyright (c) 1996 - 2024, Daniel Stenberg, <daniel@haxx.se>, and many contributors.
-See the [curl 许可证](https://curl.se/docs/copyright.html) 获取完整信息。
+Copyright (c) 1996 - 2024, Daniel Stenberg, <daniel@haxx.se>
+
+libcurl 使用 MIT/X 许可证。完整许可证见：https://curl.se/docs/copyright.html
 
 ### cJSON
 Copyright (c) 2009-2017 Dave Gamble and cJSON contributors
-Permission is hereby granted, free of charge, to any person obtaining a copy...
-[完整 MIT 许可证](https://github.com/DaveGamble/cJSON/blob/master/LICENSE)
+
+cJSON 使用 MIT 许可证。完整许可证见：https://github.com/DaveGamble/cJSON/blob/master/LICENSE
 
 ## 许可证
 
-本项目使用 MIT 许可证。
+本项目使用 **GNU General Public License v3.0 (GPL-3.0)**。
+
+详见 [LICENSE](LICENSE) 文件。
+
+```
+Copyright (C) 2026 WordGame AI Contributors
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+```
