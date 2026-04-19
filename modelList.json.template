@@ -1,0 +1,22 @@
+{
+  "modelList": {
+    "deepseek-chat": {
+      "api_key": "your-api-key-here",
+      "api_type": "openai",
+      "base_url": "https://api.deepseek.com/v1/chat/completions",
+      "model": "deepseek-chat"
+    },
+    "deepseek-reasoner": {
+      "api_key": "your-api-key-here",
+      "api_type": "openai",
+      "base_url": "https://api.deepseek.com/v1/chat/completions",
+      "model": "deepseek-reasoner"
+    },
+    "gpt-4": {
+      "api_key": "your-openai-key-here",
+      "api_type": "openai",
+      "base_url": "https://api.openai.com/v1/chat/completions",
+      "model": "gpt-4"
+    }
+  }
+}
