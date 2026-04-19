@@ -7,6 +7,7 @@ typedef struct {
     char *world_gen_model;    // 从 modelList.json 中选择的模型名称
     char *main_plot_model;    // 从 modelList.json 中选择的模型名称
     char *review_model;       // 从 modelList.json 中选择的模型名称
+    int words_per_turn;       // 每回合生成字数
 } GameSettings;
 
 void game_settings_init(GameSettings *settings);

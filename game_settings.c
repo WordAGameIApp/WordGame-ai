@@ -15,6 +15,7 @@ void game_settings_init(GameSettings *settings) {
     settings->world_gen_model = strdup("deepseek-chat");
     settings->main_plot_model = strdup("deepseek-chat");
     settings->review_model = strdup("deepseek-chat");
+    settings->words_per_turn = 500;  // 默认每回合500字
 }
 
 int game_settings_load(GameSettings *settings, const char *filename) {
@@ -38,6 +39,7 @@ int game_settings_load(GameSettings *settings, const char *filename) {
     cJSON *world = cJSON_GetObjectItemCaseSensitive(root, "world_gen_model");
     cJSON *plot = cJSON_GetObjectItemCaseSensitive(root, "main_plot_model");
     cJSON *review = cJSON_GetObjectItemCaseSensitive(root, "review_model");
+    cJSON *words = cJSON_GetObjectItemCaseSensitive(root, "words_per_turn");
 
     if (cJSON_IsNumber(temp)) settings->temperature = temp->valuedouble;
     if (cJSON_IsNumber(topp)) settings->top_p = topp->valuedouble;
@@ -53,6 +55,7 @@ int game_settings_load(GameSettings *settings, const char *filename) {
         free(settings->review_model);
         settings->review_model = strdup(review->valuestring);
     }
+    if (cJSON_IsNumber(words)) settings->words_per_turn = words->valueint;
 
     cJSON_Delete(root);
     return 1;
@@ -67,6 +70,7 @@ int game_settings_save(const GameSettings *settings, const char *filename) {
     cJSON_AddStringToObject(root, "world_gen_model", settings->world_gen_model ? settings->world_gen_model : "deepseek-chat");
     cJSON_AddStringToObject(root, "main_plot_model", settings->main_plot_model ? settings->main_plot_model : "deepseek-chat");
     cJSON_AddStringToObject(root, "review_model", settings->review_model ? settings->review_model : "deepseek-chat");
+    cJSON_AddNumberToObject(root, "words_per_turn", settings->words_per_turn);
 
     char *json_str = cJSON_Print(root);
     cJSON_Delete(root);
@@ -88,13 +92,14 @@ void game_settings_free(GameSettings *settings) {
 
 void game_settings_print(const GameSettings *settings) {
     if (!settings) return;
-    printf("\n========== 游戏设置 ==========\n");
-    printf("1. Temperature:     %.2f\n", settings->temperature);
-    printf("2. Top_p:           %.2f\n", settings->top_p);
-    printf("3. 世界生成模型:    %s\n", settings->world_gen_model ? settings->world_gen_model : "(未设置)");
-    printf("4. 主剧情生成模型:  %s\n", settings->main_plot_model ? settings->main_plot_model : "(未设置)");
-    printf("5. 审查模型:        %s\n", settings->review_model ? settings->review_model : "(未设置)");
-    printf("==============================\n");
+    printf("\n========== Game Settings ==========\n");
+    printf("1. Temperature:      %.2f\n", settings->temperature);
+    printf("2. Top_p:            %.2f\n", settings->top_p);
+    printf("3. World Gen Model:  %s\n", settings->world_gen_model ? settings->world_gen_model : "(not set)");
+    printf("4. Main Plot Model:  %s\n", settings->main_plot_model ? settings->main_plot_model : "(not set)");
+    printf("5. Review Model:     %s\n", settings->review_model ? settings->review_model : "(not set)");
+    printf("6. Words Per Turn:   %d\n", settings->words_per_turn);
+    printf("====================================\n");
 }
 
 int game_settings_select_model(const char *model_list_file, char **selected_model) {
@@ -104,20 +109,20 @@ int game_settings_select_model(const char *model_list_file, char **selected_mode
     model_list_init(&list);
 
     if (!model_list_load(&list, model_list_file)) {
-        printf("错误: 无法加载模型列表文件 %s\n", model_list_file);
+        printf("Error: Cannot load model list from %s\n", model_list_file);
         model_list_free(&list);
         return 0;
     }
 
     if (model_list_count(&list) == 0) {
-        printf("错误: 模型列表为空\n");
+        printf("Error: Model list is empty\n");
         model_list_free(&list);
         return 0;
     }
 
     model_list_print(&list);
 
-    printf("\n请选择模型 (1-%d), 0 取消: ", model_list_count(&list));
+    printf("\nSelect model (1-%d), 0 to cancel: ", model_list_count(&list));
     int choice;
     if (scanf("%d", &choice) != 1) {
         while (getchar() != '\n');
@@ -135,7 +140,7 @@ int game_settings_select_model(const char *model_list_file, char **selected_mode
     if (info && info->name) {
         free(*selected_model);
         *selected_model = strdup(info->name);
-        printf("已选择模型: %s\n", info->name);
+        printf("Selected model: %s\n", info->name);
         model_list_free(&list);
         return 1;
     }
@@ -151,7 +156,7 @@ int game_settings_edit(GameSettings *settings) {
 
     while (1) {
         game_settings_print(settings);
-        printf("\n选择要修改的设置 (1-5), 0 保存并返回: ");
+        printf("\nSelect setting to modify (1-6), 0 to save and return: ");
 
         if (scanf("%d", &choice) != 1) {
             while (getchar() != '\n');
@@ -164,7 +169,7 @@ int game_settings_edit(GameSettings *settings) {
                 return 1;
 
             case 1:
-                printf("输入 Temperature (0.0-2.0): ");
+                printf("Enter Temperature (0.0-2.0): ");
                 if (scanf("%lf", &settings->temperature) == 1) {
                     if (settings->temperature < 0.0) settings->temperature = 0.0;
                     if (settings->temperature > 2.0) settings->temperature = 2.0;
@@ -173,7 +178,7 @@ int game_settings_edit(GameSettings *settings) {
                 break;
 
             case 2:
-                printf("输入 Top_p (0.0-1.0): ");
+                printf("Enter Top_p (0.0-1.0): ");
                 if (scanf("%lf", &settings->top_p) == 1) {
                     if (settings->top_p < 0.0) settings->top_p = 0.0;
                     if (settings->top_p > 1.0) settings->top_p = 1.0;
@@ -182,22 +187,32 @@ int game_settings_edit(GameSettings *settings) {
                 break;
 
             case 3:
-                printf("\n=== 选择世界生成模型 ===\n");
+                printf("\n=== Select World Generation Model ===\n");
                 game_settings_select_model(MODEL_LIST_FILE, &settings->world_gen_model);
                 break;
 
             case 4:
-                printf("\n=== 选择主剧情生成模型 ===\n");
+                printf("\n=== Select Main Plot Model ===\n");
                 game_settings_select_model(MODEL_LIST_FILE, &settings->main_plot_model);
                 break;
 
             case 5:
-                printf("\n=== 选择审查模型 ===\n");
+                printf("\n=== Select Review Model ===\n");
                 game_settings_select_model(MODEL_LIST_FILE, &settings->review_model);
                 break;
 
+            case 6:
+                printf("Enter Words Per Turn (100-2000): ");
+                if (scanf("%d", &settings->words_per_turn) == 1) {
+                    if (settings->words_per_turn < 100) settings->words_per_turn = 100;
+                    if (settings->words_per_turn > 2000) settings->words_per_turn = 2000;
+                    printf("Words per turn set to: %d\n", settings->words_per_turn);
+                }
+                while (getchar() != '\n');
+                break;
+
             default:
-                printf("无效选择\n");
+                printf("Invalid selection\n");
                 break;
         }
     }
