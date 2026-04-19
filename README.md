@@ -9,6 +9,13 @@
 - 游戏状态自动保存
 - 剧情审查和修正机制
 
+## 依赖
+
+本项目使用了以下第三方库：
+
+- **libcurl** - 用于 HTTP 请求 ([MIT 许可证](https://curl.se/docs/copyright.html))
+- **cJSON** - 用于 JSON 解析 ([MIT 许可证](https://github.com/DaveGamble/cJSON/blob/master/LICENSE))
+
 ## 编译
 
 ```bash
@@ -46,6 +53,17 @@ cp game_settings.json.template game_settings.json
 - `book/` - 生成的世界书（自动创建）
 - `context/` - 游戏上下文存档（自动创建）
 
+## 第三方许可证
+
+### libcurl
+Copyright (c) 1996 - 2024, Daniel Stenberg, <daniel@haxx.se>, and many contributors.
+See the [curl 许可证](https://curl.se/docs/copyright.html) 获取完整信息。
+
+### cJSON
+Copyright (c) 2009-2017 Dave Gamble and cJSON contributors
+Permission is hereby granted, free of charge, to any person obtaining a copy...
+[完整 MIT 许可证](https://github.com/DaveGamble/cJSON/blob/master/LICENSE)
+
 ## 许可证
 
-MIT
+本项目使用 MIT 许可证。
