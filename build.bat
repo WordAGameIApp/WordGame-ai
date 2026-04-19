@@ -1,5 +1,4 @@
 @echo off
-chcp 65001 >nul
 setlocal EnableDelayedExpansion
 
 echo ========================================
@@ -7,11 +6,11 @@ echo WordGame AI Build Script
 echo ========================================
 echo.
 
-REM 设置 curl 路径（自动搜索或手动指定）
+REM Set curl path (auto-detect or manual)
 if not defined CURL_PATH (
     echo [INFO] CURL_PATH not set, searching for curl...
     
-    REM 首先检查常见位置
+    REM Check common locations first
     if exist "..\curl-8.19.0_7-win64-mingw" (
         set "CURL_PATH=..\curl-8.19.0_7-win64-mingw"
         echo [FOUND] curl at: !CURL_PATH!
@@ -19,15 +18,6 @@ if not defined CURL_PATH (
         set "CURL_PATH=C:\curl"
         echo [FOUND] curl at: !CURL_PATH!
     ) else (
-        REM 在 PATH 中搜索
-        for %%p in (curl.exe) do (
-            set "CURL_BIN=%%~$PATH:p"
-            if defined CURL_BIN (
-                for %%d in ("!CURL_BIN!\..") do set "CURL_PATH=%%~fd"
-                echo [FOUND] curl in PATH at: !CURL_PATH!
-                goto :curl_found
-            )
-        )
         echo [ERROR] curl not found! Please install curl or set CURL_PATH manually.
         echo.
         echo Example: set CURL_PATH=C:\path\to\curl
@@ -37,13 +27,11 @@ if not defined CURL_PATH (
     echo [INFO] Using CURL_PATH: %CURL_PATH%
 )
 
-:curl_found
-
-REM 设置 cjson 路径（自动搜索或手动指定）
+REM Set cjson path (auto-detect or manual)
 if not defined CJSON_PATH (
     echo [INFO] CJSON_PATH not set, searching for cjson...
     
-    REM 首先检查常见位置
+    REM Check common locations first
     if exist "..\cjson" (
         set "CJSON_PATH=..\cjson"
         echo [FOUND] cjson at: !CJSON_PATH!
@@ -68,7 +56,7 @@ echo ========================================
 echo Setting up environment variables...
 echo ========================================
 
-REM 设置编译器标志
+REM Set compiler flags
 set "CURL_CFLAGS=-I%CURL_PATH%\include"
 set "CURL_LDFLAGS=-L%CURL_PATH%\lib -lcurl"
 set "CJSON_CFLAGS=-I%CJSON_PATH%"
@@ -85,7 +73,7 @@ echo Building WordGame AI...
 echo ========================================
 echo.
 
-REM 运行 make
+REM Run make
 make %*
 
 if %ERRORLEVEL% neq 0 (
